@@ -1,1 +1,26 @@
-{}
+{
+ "A2": {
+  "benchmark": "IFIX (B3), for information",
+  "currency": "BRL",
+  "description": "Brazilian listed real-estate funds (FII), long only, all fund types",
+  "market": "B3",
+  "paper_venue": "MetaTrader 5 demo account (XP), BRL 1,000,000",
+  "start": "2026-11-18"
+ },
+ "A4": {
+  "benchmark": "CDI, for information",
+  "currency": "BRL",
+  "description": "Brazilian listed real-estate funds (FII), long/short, all fund types",
+  "market": "B3",
+  "paper_venue": "MetaTrader 5 demo account (XP), BRL 1,000,000",
+  "start": "2026-11-18"
+ },
+ "A5": {
+  "benchmark": "IFIX (B3), for information",
+  "currency": "BRL",
+  "description": "Brazilian listed real-estate funds (FII), long only, all fund types, with a short-price hedge in 4-year DI1 futures (January contracts)",
+  "market": "B3",
+  "paper_venue": "MetaTrader 5 demo account (XP), BRL 1,000,000",
+  "start": "2026-11-18"
+ }
+}
