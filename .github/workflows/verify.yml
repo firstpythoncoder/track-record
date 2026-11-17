@@ -1,0 +1,28 @@
+# Independent check of this record, run by GitHub on its own schedule: if a session has no valid commitment shortly
+# after its market opens, or the chain or a time stamp does not verify, the run fails (and GitHub notifies the owner).
+name: verify
+on:
+  schedule:
+    - cron: "15 13 * * 1-5"   # B3: 10:15 America/Sao_Paulo
+    - cron: "50 14 * * 1-5"   # NYSE: 09:50 New York in winter, 10:50 in summer
+    - cron: "30 23 * * *"     # full verification every evening
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install opentimestamps==0.5.0
+      - name: watchdog (today's sessions)
+        if: github.event_name == 'schedule' && github.event.schedule != '30 23 * * *'
+        run: python3 tools/verify.py --watchdog
+      - name: full verification
+        if: github.event_name != 'schedule' || github.event.schedule == '30 23 * * *'
+        run: python3 tools/verify.py
