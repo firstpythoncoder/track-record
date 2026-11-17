@@ -1010,9 +1010,13 @@
   "tz": "America/New_York"
  },
  "books": {
+  "A1": "B3",
   "A2": "B3",
+  "A3": "B3",
   "A4": "B3",
   "A5": "B3",
+  "A6": "NYSE",
+  "A7": "NYSE",
   "A8": "NYSE"
  }
 }

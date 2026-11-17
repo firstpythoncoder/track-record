@@ -10,8 +10,8 @@ manifests and their third-party time stamps.
 
 ## 1. Books
 
-`books.json` lists each book with its id, a description, its market, its paper-trading venue and the first session of
-its record. A book stays in the record from that session on. If it is retired, a manifest records the retirement, and
+`books.json` lists each book with its id, its name, a description, its market, its paper-trading venue (or "model
+only": no paper account, the public calculation only) and the first session of its record. A book stays in the record from that session on. If it is retired, a manifest records the retirement, and
 its history stays here.
 
 ## 2. What is committed each session
@@ -25,7 +25,6 @@ one trailing newline) holds:
 | `data_through` | the last session whose data the decision used (normally the previous session) |
 | `weights` | `{instrument: weight}`. Each weight is a fraction of the book's net asset value (NAV) after the session's trades, rounded to 1e-6; negative means short. Omitted instruments are 0. |
 | `hedge` (some books) | a futures hedge: `weight` (a fraction of NAV in a long-price position of the legs; negative = short price) and `legs` (`{contract: share}`, summing to 1) |
-| `sub_books` (joint books) | per sub-book: `nav_share` and its own `weights`, each a fraction of the sub-book's NAV |
 | `settings_hash`, `registered_params_sha256` | identify the frozen model settings; a change of settings shows up here |
 | `salt` | 32 random bytes, so that two identical books on different days have different hashes |
 
@@ -100,29 +99,35 @@ The calculation uses only the committed weights and public data. It assumes:
    - A futures hedge has no cash weight. Its leg `j` has weight `h_j = hedge.weight · legs[j]`, and
      `F_j = PU_{j,D+1} / PU_{j,D} − 1 − rf`, from B3 settlement prices (PU). This is the B3 daily adjustment per unit
      of notional.
-   - `cost` is charged once, at the rebalancing at the close of `D`: `k · Σ |w_i − w̃_i|`, where `w̃` are the drifted
-     weights before the trade. `k` is:
+   - `cost` is charged once, at the rebalancing at the close of `D`: `Σ k_i · |w_i − w̃_i|`, where `w̃` are the
+     drifted weights before the trade. `k_i` is:
      - 10 bp for B3 funds and equities;
-     - 5 bp for US equities;
-     - 0.5 bp of notional for DI1 legs.
+     - 0.5 bp of notional for DI1 legs;
+     - for US equities, Interactive Brokers' tiered pricing per share, **without the per-order minimum**, so the result
+       does not depend on the size of the book: `k_i = min(0.0035 / P_i, 1 %) + 0.001813 / P_i + 0.103 bp`, with `P_i`
+       the close of `D` in USD. That is commission USD 0.0035 a share capped at 1 % of value; clearing, exchange and
+       regulatory pass-through fees of USD 0.001813 a share; and half the SEC fee on sales. It is published per name
+       as `cost_per_unit` (5 bp for a name without a close). There is no spread charge: the trades are assumed at the
+       official close, as in the closing auction.
    - `borrow` is charged per session on short positions: `b · Σ_i max(−w_i, 0) / 252`, with `b` = 4.0 % a year for B3
      securities and 1.0 % a year for US equities.
-3. **Joint books.** A joint book's return is the `nav_share`-weighted sum of its sub-books' returns. Each sub-book is
-   computed as above.
-4. **Outputs.** Results are cumulative from each book's first session: `results/<book>/public_daily.csv` (gross and net
+3. **Outputs.** Results are cumulative from each book's first session: `results/<book>/public_daily.csv` (gross and net
    of `cost` and `borrow`).
 
 The per-instrument inputs used each day are published in `returns/<market>/<year>/<D>.csv` for the whole universe, not
 only the holdings. For B3 they are the close, the split factor and the cash distribution, with their sources. Prices
 come from B3's own files (COTAHIST and settlement prices); an instrument missing from them is priced from another
-public source, named in its row. For US equities they are the daily total return. Each value can be checked against B3's COTAHIST files and settlement prices,
+public source, named in its row. For US equities they are the daily total return and `cost_per_unit`. Each value can be checked against B3's COTAHIST files and settlement prices,
 the funds' and companies' distribution notices, BCB, FRED or any public price source.
 
 ## 7. Paper results
 
-Each book is also traded in a broker paper or demo account:
-- the B3 books in a MetaTrader 5 demo account at XP, from BRL 1,000,000 each;
-- the US book in an Interactive Brokers paper account, from USD 800,000.
+Some books are also traded in a broker paper or demo account (`paper_venue` in `books.json`):
+- B3 books in a MetaTrader 5 demo account at XP, from BRL 1,000,000 each;
+- the US book in an Interactive Brokers paper account, from USD 800,000. Its commissions are recomputed at the tiered
+  rates of section 6, without the per-order minimum, so they do not depend on the account's size.
+
+Model-only books have no paper results.
 
 `results/<book>/paper_daily.csv` gives:
 - the paper NAV, marked at official closes, including fees and distributions;
