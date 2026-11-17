@@ -94,10 +94,11 @@ The calculation uses only the committed weights and public data. It assumes:
      close, `s` the split factor and `d` the cash distribution (dividend, fund income) per share whose ex date is
      `D+1`.
    - `1 − Σ_i w_i` is cash (negative = borrowed). It earns or pays `rf` for `D → D+1`:
-     - BRL books: CDI, the daily rate of day `D` (Banco Central do Brasil, SGS series 12);
+     - BRL books: CDI compounded over the business days from `D` to `D+1`, normally one day's rate (Banco Central do
+       Brasil, SGS series 12);
      - USD books: the federal funds effective rate of day `D` (FRED `DFF`), as `DFF/100/360` per calendar day.
    - A futures hedge has no cash weight. Its leg `j` has weight `h_j = hedge.weight · legs[j]`, and
-     `F_j = PU_{j,D+1} / PU_{j,D} − 1 − CDI_D`, from B3 settlement prices (PU). This is the B3 daily adjustment per unit
+     `F_j = PU_{j,D+1} / PU_{j,D} − 1 − rf`, from B3 settlement prices (PU). This is the B3 daily adjustment per unit
      of notional.
    - `cost` is charged once, at the rebalancing at the close of `D`: `k · Σ |w_i − w̃_i|`, where `w̃` are the drifted
      weights before the trade. `k` is:
@@ -112,8 +113,9 @@ The calculation uses only the committed weights and public data. It assumes:
    of `cost` and `borrow`).
 
 The per-instrument inputs used each day are published in `returns/<market>/<year>/<D>.csv` for the whole universe, not
-only the holdings. For B3 they are the close, the split factor and the cash distribution, with their sources. For US
-equities they are the daily total return. Each value can be checked against B3's COTAHIST files and settlement prices,
+only the holdings. For B3 they are the close, the split factor and the cash distribution, with their sources. Prices
+come from B3's own files (COTAHIST and settlement prices); an instrument missing from them is priced from another
+public source, named in its row. For US equities they are the daily total return. Each value can be checked against B3's COTAHIST files and settlement prices,
 the funds' and companies' distribution notices, BCB, FRED or any public price source.
 
 ## 7. Paper results
