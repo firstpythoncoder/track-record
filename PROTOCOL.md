@@ -130,8 +130,15 @@ Each book is also traded in a broker paper or demo account:
 - slippage against the session's VWAP and close.
 
 Demo and paper accounts fill against the displayed quotes without queue position or market impact, so these results
-measure execution plumbing, timing and spread, not capacity. Fills reveal positions, so they are sealed like the
-weights and published after the same 63-session delay (`statements/`).
+measure execution plumbing, timing and spread, not capacity.
+
+Fills reveal positions, so they are sealed like the weights:
+- **When.** Each evening after the session, every fill of the day is sealed. The commitment has `kind: fills`, book
+  `<book>.fills`, and no deadline.
+- **Contents.** Each fill's time, instrument, side, quantity, price and fee, in canonical CSV with a salt line.
+- **Reveal.** After the same 63-session delay, as `statements/<book>/<year>/<D>-fills.csv` with its key.
+
+Once revealed, the paper NAV can be rebuilt trade by trade.
 
 ## 8. Revisions
 

@@ -142,10 +142,13 @@ def check_chain(network: bool, verbose: bool) -> dict:
             f = ROOT / c["sealed"]
             if not f.exists() or sha256(f.read_bytes()) != c["sealed_sha256"]:
                 problem(f"{k}: sealed file missing or altered")
-            deadline = dt.datetime.fromisoformat(c["deadline_utc"])
-            valid = first is not None and first < deadline
-            if not valid:
-                problem(f"{k}: time-stamped {first} at or after the open {deadline}: does not count")
+            if c.get("deadline_utc"):
+                deadline = dt.datetime.fromisoformat(c["deadline_utc"])
+                valid = first is not None and first < deadline
+                if not valid:
+                    problem(f"{k}: time-stamped {first} at or after the open {deadline}: does not count")
+            else:
+                valid = first is not None                      # a statement (fills): sealed after the session, no deadline
             out[(c["book"], c["session"])] = dict(c, manifest=rel(p), stamped=first, valid=valid)
         if verbose:
             print(f"{rel(p)}: tsa {first.isoformat() if first else None}; ots {ots}; "
@@ -179,7 +182,10 @@ def check_reveals(commits: dict) -> int:
                            capture_output=True)
         if r.returncode or sha256(r.stdout) != c["plain_sha256"]:
             problem(f"{rel(kp)}: does not open its sealed file to the committed weights")
-        wp = ROOT / "weights" / k["book"] / k["session"][:4] / f"{k['session']}.json"
+        if c.get("kind") == "fills":
+            wp = ROOT / "statements" / k["book"].split(".")[0] / k["session"][:4] / f"{k['session']}-fills.csv"
+        else:
+            wp = ROOT / "weights" / k["book"] / k["session"][:4] / f"{k['session']}.json"
         if wp.exists() and sha256(wp.read_bytes()) != c["plain_sha256"]:
             problem(f"{rel(wp)}: differs from the committed weights")
         n += 1
