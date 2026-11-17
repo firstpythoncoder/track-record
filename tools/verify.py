@@ -225,7 +225,8 @@ def watchdog(commits: dict, now: dt.datetime) -> None:
     for b, info in books.items():
         m = info["market"]
         today = now.astimezone(ZoneInfo(OPENS[m][0])).date().isoformat()
-        if today not in cal.get(m, {}).get("sessions", []) or now < session_open(m, today) + dt.timedelta(minutes=10):
+        if today < info["start"] or today not in cal.get(m, {}).get("sessions", []) \
+                or now < session_open(m, today) + dt.timedelta(minutes=10):
             continue
         c = commits.get((b, today))
         if c and c["valid"]:
