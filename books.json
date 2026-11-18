@@ -1,4 +1,13 @@
 {
+ "A1": {
+  "benchmark": "IFIX (B3), for information",
+  "currency": "BRL",
+  "description": "Brazilian listed real-estate funds (FII), long only, brick (property-owning) funds",
+  "market": "B3",
+  "name": "FII long only, brick",
+  "paper_venue": "none: model only (public calculation only)",
+  "start": "2026-11-18"
+ },
  "A2": {
   "benchmark": "IFIX (B3), for information",
   "currency": "BRL",
@@ -6,6 +15,15 @@
   "market": "B3",
   "name": "FII long only, all funds",
   "paper_venue": "MetaTrader 5 demo account (XP), BRL 1,000,000",
+  "start": "2026-11-18"
+ },
+ "A3": {
+  "benchmark": "CDI, for information",
+  "currency": "BRL",
+  "description": "Brazilian listed real-estate funds (FII), long/short, brick (property-owning) funds",
+  "market": "B3",
+  "name": "FII long and short, brick",
+  "paper_venue": "none: model only (public calculation only)",
   "start": "2026-11-18"
  },
  "A4": {
