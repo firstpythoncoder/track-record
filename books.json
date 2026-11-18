@@ -43,5 +43,32 @@
   "name": "FII long only, all funds, DI hedge",
   "paper_venue": "MetaTrader 5 demo account (XP), BRL 1,000,000",
   "start": "2026-11-18"
+ },
+ "A6": {
+  "benchmark": "federal funds rate, for information",
+  "currency": "USD",
+  "description": "US equities, long/short",
+  "market": "NYSE",
+  "name": "US Equities long and short",
+  "paper_venue": "none: model only (public calculation only)",
+  "start": "2026-11-18"
+ },
+ "A7": {
+  "benchmark": "S&P 500 total return, for information",
+  "currency": "USD",
+  "description": "US equities, long only",
+  "market": "NYSE",
+  "name": "US Equities long only",
+  "paper_venue": "none: model only (public calculation only)",
+  "start": "2026-11-18"
+ },
+ "A8": {
+  "benchmark": "S&P 500 total return, for information",
+  "currency": "USD",
+  "description": "US equities, a long-only portfolio extended by a long/short one, held as one combined portfolio",
+  "market": "NYSE",
+  "name": "US Equities short extension",
+  "paper_venue": "Interactive Brokers paper account, USD 800,000",
+  "start": "2026-11-18"
  }
 }
