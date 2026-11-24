@@ -10,3 +10,6 @@ Revisions of published results and of the protocol, with their reasons. Committe
 | 2026-11-20 | returns/NYSE/2026/2026-11-19.csv revised | source data revised after first publication |
 | 2026-11-21 | returns/NYSE/2026/2026-11-18.csv revised | source data revised after first publication |
 | 2026-11-21 | returns/NYSE/2026/2026-11-19.csv revised | source data revised after first publication |
+| 2026-11-24 | returns/NYSE/2026/2026-11-18.csv revised | source data revised after first publication |
+| 2026-11-24 | returns/NYSE/2026/2026-11-19.csv revised | source data revised after first publication |
+| 2026-11-24 | returns/NYSE/2026/2026-11-20.csv revised | source data revised after first publication |
